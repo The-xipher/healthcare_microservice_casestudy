@@ -1,6 +1,8 @@
 networks:
-  mongo:
-  mysql:
+  #mongo:
+  #mysql:
+  default: 
+    driver: bridge
 services:
   mongo:
     image: mongo:latest
@@ -10,13 +12,14 @@ services:
     volumes:
       - ./data/mongo:/data/db
     networks:
-      - mongo
+      #- mongo
+      - default
     restart: always
   mysql:
     image: mysql:latest
     container_name: mysql
     ports:
-      - "3306:3306"
+      - "3305:3306"
     environment:
       MYSQL_ROOT_HOST: '%'
       MYSQL_ROOT_PASSWORD: password
@@ -26,7 +29,8 @@ services:
     volumes:
       - ./data/mysql:/var/lib/mysql
     networks:
-      - mysql
+      #- mysql
+      - default
     restart: always
   discovery-service:
     build: ./discovery-service
@@ -35,6 +39,10 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
     ports:
       - "8761:8761"
+    networks:
+     # - mongo
+      #- mysql  
+      - default
   patient_service:
     build: ./patient-service
     container_name: patient-service
@@ -46,7 +54,7 @@ services:
       - mysql
       - discovery-service
     networks:
-      - mysql
+     # - mysql
       - default
     restart: always
   doctor_service:
@@ -60,7 +68,7 @@ services:
       - mongo
       - discovery-service
     networks:
-      - mongo
+     # - mongo
       - default
     restart: always
   appointment_service:
@@ -76,7 +84,7 @@ services:
       - discovery-service
 
     networks:
-      - mysql
-      - mongo
+      #- mysql
+      #- mongo
       - default
     restart: always
